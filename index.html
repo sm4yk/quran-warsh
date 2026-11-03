@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>القرآن الكريم - رواية ورش عن نافع (PWA)</title>
+    
+    <!-- PWA & Android Meta Tags -->
+    <meta name="theme-color" content="#021e17">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="قرآن ورش">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Dynamically Inject Web Manifest -->
+    <script>
+        const manifestData = {
+            "name": "القرآن الكريم - رواية ورش عن نافع",
+            "short_name": "قرآن ورش",
+            "description": "تطبيق القرآن الكريم كاملاً برواية ورش عن نافع بدون إعلانات للقرّاء المغاربة والعرب",
+            "start_url": "./",
+            "display": "standalone",
+            "background_color": "#021e17",
+            "theme_color": "#021e17",
+            "orientation": "portrait",
+            "icons": [
+                {
+                    "src": "https://cdn-icons-png.flaticon.com/512/2903/2903561.png",
+                    "sizes": "192x192",
+                    "type": "image/png",
+                    "purpose": "any maskable"
+                },
+                {
+                    "src": "https://cdn-icons-png.flaticon.com/512/2903/2903561.png",
+                    "sizes": "512x512",
+                    "type": "image/png",
+                    "purpose": "any maskable"
+                }
+            ]
+        };
+        const stringManifest = JSON.stringify(manifestData);
+        const blob = new Blob([stringManifest], {type: 'application/json'});
+        const manifestURL = URL.createObjectURL(blob);
+        const manifestLink = document.createElement('link');
+        manifestLink.rel = 'manifest';
+        manifestLink.href = manifestURL;
+        document.head.appendChild(manifestLink);
+    </script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Arabic Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            850: '#06382b',
+                            900: '#042f24',
+                            950: '#021e17',
+                        },
+                        gold: {
+                            300: '#f6e05e',
+                            400: '#ecc94b',
+                            500: '#d69e2e',
+                            600: '#b7791f',
+                        }
+                    },
+                    fontFamily: {
+                        tajawal: ['Tajawal', 'sans-serif'],
+                        amiri: ['Amiri', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #021e17;
+            color: #e2e8f0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .quran-font {
+            font-family: 'Amiri', serif;
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #042f24;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #10b981;
+            border-radius: 4px;
+        }
+        input[type="range"] {
+            accent-color: #d69e2e;
+        }
+    </style>
+</head>
+<body class="bg-emerald-950 min-h-screen flex flex-col justify-between selection:bg-gold-500 selection:text-emerald-950">
+
+    <!-- Header Navigation -->
+    <header class="bg-emerald-900/90 backdrop-blur-md border-b border-emerald-800/60 sticky top-0 z-30 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 h-16 sm:h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-tr from-gold-600 to-gold-400 flex items-center justify-center text-emerald-950 shadow-lg shadow-gold-500/20 font-bold text-xl sm:text-2xl">
+                    📖
+                </div>
+                <div>
+                    <h1 class="text-lg sm:text-xl font-bold text-gold-400 tracking-wide font-amiri leading-none">القرآن الكريم</h1>
+                    <p class="text-[11px] sm:text-xs text-emerald-300/90 font-medium mt-1">برواية ورش عن نافع المدني</p>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center gap-1.5 sm:gap-2">
+                <!-- PWA Install Button -->
+                <button id="pwaInstallBtn" onclick="triggerPWAInstall()" class="hidden px-2.5 py-1.5 rounded-xl bg-gold-500 hover:bg-gold-400 text-emerald-950 font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-gold-500/20 transition animate-pulse">
+                    <i class="fa-solid fa-download"></i>
+                    <span>تثبيت التطبيق</span>
+                </button>
+
+                <!-- GitHub / APK Help Guide -->
+                <button onclick="openInstallGuideModal()" class="px-2.5 py-1.5 rounded-xl bg-emerald-800/80 hover:bg-emerald-700 border border-emerald-700/60 text-gold-400 text-xs flex items-center gap-1.5 transition">
+                    <i class="fa-brands fa-android text-base text-green-400"></i>
+                    <span class="hidden sm:inline">تحميل أندرويد / GitHub</span>
+                </button>
+
+                <!-- Ahkam Warsh Button -->
+                <button onclick="openAhkamModal()" class="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-gold-500/10 hover:bg-gold-500/20 border border-gold-500/40 text-gold-400 text-xs flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-book-open"></i>
+                    <span class="hidden sm:inline">قواعد ورش</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Application Container -->
+    <main class="max-w-7xl mx-auto px-4 py-4 sm:py-6 w-full flex-1 grid grid-cols-1 lg:grid-cols-12 gap-5">
+
+        <!-- Sidebar Options: Select Warsh Reciter & Surah Search -->
+        <aside class="lg:col-span-4 space-y-4">
+            
+            <!-- Reciter Selection Card -->
+            <div class="bg-emerald-900/40 border border-emerald-800/60 rounded-2xl p-4 backdrop-blur-sm shadow-xl">
+                <label class="block text-gold-400 text-xs sm:text-sm font-semibold mb-2 flex items-center justify-between">
+                    <span class="flex items-center gap-2">
+                        <i class="fa-solid fa-user-check text-gold-500"></i> القارئ (رواية ورش):
+                    </span>
+                    <span class="text-[10px] bg-emerald-800/80 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-700">ورش عن نافع</span>
+                </label>
+                <select id="reciterSelect" onchange="changeReciter()" class="w-full bg-emerald-950 border border-emerald-700/70 rounded-xl px-3 py-2.5 text-emerald-100 focus:outline-none focus:border-gold-400 transition cursor-pointer text-xs sm:text-sm">
+                    <!-- Reciters populated dynamically -->
+                </select>
+            </div>
+
+            <!-- Surah Search & List Card -->
+            <div class="bg-emerald-900/40 border border-emerald-800/60 rounded-2xl p-4 backdrop-blur-sm shadow-xl flex flex-col h-[380px] lg:h-[calc(100vh-280px)]">
+                
+                <!-- Search & Filter Controls -->
+                <div class="flex items-center justify-between mb-3 gap-2">
+                    <div class="relative flex-1">
+                        <input type="text" id="searchInput" oninput="filterSurahs()" placeholder="بحث في السور..." 
+                            class="w-full bg-emerald-950 border border-emerald-700/60 rounded-xl pr-9 pl-3 py-2 text-xs text-emerald-100 placeholder-emerald-500 focus:outline-none focus:border-gold-400 transition">
+                        <i class="fa-solid fa-magnifying-glass absolute right-3 top-2.5 text-emerald-500 text-xs"></i>
+                    </div>
+
+                    <button id="toggleFavoritesBtn" onclick="toggleFavoritesView()" class="px-2.5 py-2 rounded-xl bg-emerald-800/60 hover:bg-emerald-800 border border-emerald-700/50 text-gold-400 text-xs flex items-center gap-1 transition" title="المفضلة">
+                        <i class="fa-solid fa-heart text-red-400"></i>
+                        <span id="favCountBadge" class="text-[10px] bg-emerald-950 text-gold-300 px-1.5 rounded-full">0</span>
+                    </button>
+                </div>
+
+                <!-- Surahs List -->
+                <div id="surahList" class="overflow-y-auto flex-1 space-y-1.5 pr-1">
+                    <!-- Surah Items populated dynamically -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Audio Player Banner & Controls -->
+        <section class="lg:col-span-8 flex flex-col space-y-4">
+            
+            <!-- Banner Visualizer -->
+            <div class="relative bg-gradient-to-br from-emerald-900/90 via-emerald-900 to-emerald-950 border border-emerald-800/80 rounded-3xl p-6 sm:p-8 shadow-2xl overflow-hidden text-center flex flex-col items-center justify-center min-h-[260px] sm:min-h-[300px]">
+                
+                <div class="absolute -top-12 -left-12 w-40 h-40 bg-gold-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -bottom-12 -right-12 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div id="nowPlayingContainer" class="relative z-10 w-full max-w-lg mx-auto">
+                    <span id="currentReciterName" class="inline-block px-3 py-1 rounded-full bg-emerald-800/80 border border-emerald-700/60 text-gold-400 text-xs sm:text-sm font-medium mb-3">
+                        العيون الكوشي
+                    </span>
+
+                    <h2 id="currentSurahName" class="text-3xl sm:text-5xl font-amiri font-bold text-emerald-50 mb-2 tracking-wide">
+                        سورة الفاتحة
+                    </h2>
+
+                    <p id="currentSurahInfo" class="text-xs sm:text-sm text-emerald-300/80 mb-5">
+                        مكية • عدد آياتها 7 • ترتيبها 1
+                    </p>
+
+                    <!-- Equalizer Animation -->
+                    <div id="visualizerBars" class="flex justify-center items-end gap-1.5 h-8 mb-4 opacity-40">
+                        <span class="w-1.5 bg-gold-400 rounded-full h-3 animate-pulse"></span>
+                        <span class="w-1.5 bg-gold-400 rounded-full h-7 animate-pulse delay-100"></span>
+                        <span class="w-1.5 bg-gold-400 rounded-full h-8 animate-pulse delay-200"></span>
+                        <span class="w-1.5 bg-gold-400 rounded-full h-5 animate-pulse delay-300"></span>
+                        <span class="w-1.5 bg-gold-400 rounded-full h-7 animate-pulse delay-150"></span>
+                    </div>
+
+                    <button id="currentFavBtn" onclick="toggleCurrentFavorite()" class="text-emerald-300 hover:text-red-400 transition text-xs flex items-center gap-2 mx-auto bg-emerald-950/60 px-3 py-1.5 rounded-full border border-emerald-800/60">
+                        <i id="currentFavIcon" class="fa-regular fa-heart"></i>
+                        <span id="favStatusText">إضافة للمفضلة</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Audio Player Controls -->
+            <div class="bg-emerald-900/60 border border-emerald-800/80 rounded-2xl p-4 sm:p-6 shadow-xl backdrop-blur-md">
+                
+                <audio id="quranAudio" preload="metadata"></audio>
+
+                <!-- Progress Bar & Timers -->
+                <div class="space-y-1.5 mb-5">
+                    <input type="range" id="progressBar" value="0" min="0" max="100" onchange="seekAudio(this.value)"
+                        class="w-full h-2 bg-emerald-950 rounded-lg appearance-none cursor-pointer border border-emerald-800/60">
+                    <div class="flex justify-between text-[11px] text-emerald-300 font-mono">
+                        <span id="currentTime">00:00</span>
+                        <span id="durationTime">00:00</span>
+                    </div>
+                </div>
+
+                <!-- Main Player Buttons -->
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    
+                    <div class="flex items-center gap-3">
+                        <button id="loopBtn" onclick="toggleLoop()" title="تكرار السورة" class="p-2.5 rounded-xl bg-emerald-950 border border-emerald-800 text-emerald-400 hover:text-gold-400 transition text-xs">
+                            <i class="fa-solid fa-repeat"></i>
+                        </button>
+                        <select id="playbackSpeed" onchange="changeSpeed(this.value)" class="bg-emerald-950 border border-emerald-800 rounded-xl px-2 py-1.5 text-xs text-emerald-300 focus:outline-none">
+                            <option value="0.75">0.75x</option>
+                            <option value="1" selected>1.0x</option>
+                            <option value="1.25">1.25x</option>
+                            <option value="1.5">1.5x</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-center gap-4">
+                        <button onclick="playPrevious()" class="w-11 h-11 rounded-full bg-emerald-800 hover:bg-emerald-700 text-emerald-100 flex items-center justify-center transition shadow-md active:scale-95" title="السورة السابقة">
+                            <i class="fa-solid fa-backward-step text-base"></i>
+                        </button>
+
+                        <button id="playPauseBtn" onclick="togglePlayPause()" class="w-14 h-14 rounded-full bg-gradient-to-tr from-gold-500 to-gold-400 text-emerald-950 flex items-center justify-center font-bold text-xl shadow-lg shadow-gold-500/20 hover:scale-105 transition active:scale-95">
+                            <i id="playIcon" class="fa-solid fa-play ml-0.5"></i>
+                        </button>
+
+                        <button onclick="playNext()" class="w-11 h-11 rounded-full bg-emerald-800 hover:bg-emerald-700 text-emerald-100 flex items-center justify-center transition shadow-md active:scale-95" title="السورة التالية">
+                            <i class="fa-solid fa-forward-step text-base"></i>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button id="muteBtn" onclick="toggleMute()" class="text-emerald-300 hover:text-gold-400 transition text-sm">
+                            <i id="volumeIcon" class="fa-solid fa-volume-high"></i>
+                        </button>
+                        <input type="range" id="volumeBar" min="0" max="1" step="0.05" value="0.9" oninput="changeVolume(this.value)" class="w-20 h-1.5 bg-emerald-950 rounded-lg cursor-pointer">
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Modal 1: Ahkam Warsh Rules Card -->
+    <div id="ahkamModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-emerald-900 border border-emerald-700 rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto p-5 sm:p-6 shadow-2xl relative">
+            <button onclick="closeAhkamModal()" class="absolute top-4 left-4 text-emerald-400 hover:text-gold-400 text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-xl sm:text-2xl font-bold font-amiri text-gold-400 mb-4 border-b border-emerald-800 pb-2">أبرز أصول وقواعد رواية ورش عن نافع</h3>
+            
+            <div class="space-y-3 text-xs sm:text-sm text-emerald-100 leading-relaxed">
+                <div class="bg-emerald-950/70 p-3 rounded-xl border border-emerald-800">
+                    <h4 class="font-bold text-gold-300 mb-1"><i class="fa-solid fa-circle-dot text-[10px] text-gold-500 ml-1"></i> 1. نقل الحركة:</h4>
+                    <p>ينقل ورش حركة الهمزة إلى الساكن الصحيح قبلها إذا كان منفصلاً عنها مع إسقاط الهمزة (مثال: ﴿قَدۡ أَفۡلَحَ﴾ تقرأ: "قَدَفْلَحَ").</p>
+                </div>
+                <div class="bg-emerald-950/70 p-3 rounded-xl border border-emerald-800">
+                    <h4 class="font-bold text-gold-300 mb-1"><i class="fa-solid fa-circle-dot text-[10px] text-gold-500 ml-1"></i> 2. صلة ميم الجمع:</h4>
+                    <p>يصل ورش ميم الجمع بواو لفظية مع الإشباع (6 حركات) إذا وقع بعدها همزة قطع (مثال: ﴿عَلَيۡهِمۡ أَنذَرۡتَهُمۡ﴾ تقرأ: "عليهمُ وُأنذرتهم").</p>
+                </div>
+                <div class="bg-emerald-950/70 p-3 rounded-xl border border-emerald-800">
+                    <h4 class="font-bold text-gold-300 mb-1"><i class="fa-solid fa-circle-dot text-[10px] text-gold-500 ml-1"></i> 3. ترقيق الراءات:</h4>
+                    <p>يرقق ورش كل راء مفتوحة أو مضمومة سبقت بكسرة لازمة أو بياء ساكنة سكوناً حياً أو ميتاً في نفس الكلمة (مثال: ﴿سَاحِرٌ﴾، ﴿خَيۡرٌ﴾).</p>
+                </div>
+                <div class="bg-emerald-950/70 p-3 rounded-xl border border-emerald-800">
+                    <h4 class="font-bold text-gold-300 mb-1"><i class="fa-solid fa-circle-dot text-[10px] text-gold-500 ml-1"></i> 4. تغليظ اللامات:</h4>
+                    <p>يغلظ ورش كل لام مفتوحة إذا تقدمها أحد الحروف الثلاثة (الصاد، الطاء، الظاء) بشرط أن تكون هذه الحروف مفتوحة أو ساكنة (مثال: ﴿الصَّلَاةَ﴾، ﴿بَطَلَ﴾).</p>
+                </div>
+                <div class="bg-emerald-950/70 p-3 rounded-xl border border-emerald-800">
+                    <h4 class="font-bold text-gold-300 mb-1"><i class="fa-solid fa-circle-dot text-[10px] text-gold-500 ml-1"></i> 5. مد البدل والمدود:</h4>
+                    <p>يمد ورش المد المنفصل والمتصل بالإشباع (6 حركات)، وله في مد البدل ثلاثة الأوجه: القصر (حركتان)، التوسط (4 حركات)، والإشباع (6 حركات).</p>
+                </div>
+            </div>
+
+            <button onclick="closeAhkamModal()" class="mt-5 w-full py-2.5 bg-gold-500 hover:bg-gold-400 text-emerald-950 font-bold rounded-xl transition text-xs sm:text-sm">
+                إغلاق
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal 2: Android Installation & GitHub Guide -->
+    <div id="installGuideModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-emerald-900 border border-emerald-700 rounded-2xl max-w-xl w-full max-h-[85vh] overflow-y-auto p-5 shadow-2xl relative">
+            <button onclick="closeInstallGuideModal()" class="absolute top-4 left-4 text-emerald-400 hover:text-gold-400 text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            
+            <div class="flex items-center gap-3 mb-4 border-b border-emerald-800 pb-3">
+                <i class="fa-brands fa-android text-3xl text-green-400"></i>
+                <div>
+                    <h3 class="text-lg font-bold text-gold-400">كيفية تثبيت التطبيق على الأندرويد أو رفع على GitHub</h3>
+                    <p class="text-xs text-emerald-300">دليل خطوة بخطوة للتحويل إلى تطبيق للهاتف (APK / PWA)</p>
+                </div>
+            </div>
+
+            <div class="space-y-4 text-xs text-emerald-100">
+                <!-- Method 1 -->
+                <div class="bg-emerald-950/80 p-3.5 rounded-xl border border-emerald-800">
+                    <h4 class="font-bold text-gold-300 text-sm mb-1">الطريقة 1: التثبيت المباشر على الهاتف (PWA)</h4>
+                    <ol class="list-decimal list-inside space-y-1 text-emerald-200">
+                        <li>افتح هذا الرابط في متصفح **Google Chrome** على هاتفك الأندرويد.</li>
+                        <li>اضغط على النقاط الثلاث <strong>(⋮)</strong> في أعلى اليسار.</li>
+                        <li>اختر <strong>"الإضافة إلى الشاشة الرئيسية" (Add to Home screen)</strong> أو زر "تثبيت التطبيق".</li>
+                        <li>سيظهر التطبيق كأيقونة مستقلة على هاتفك ويعمل بدون شريط المتصفح!</li>
+                    </ol>
+                </div>
+
+                <!-- Method 2 -->
+                <div class="bg-emerald-950/80 p-3.5 rounded-xl border border-emerald-800">
+                    <h4 class="font-bold text-gold-300 text-sm mb-1">الطريقة 2: رفع المجلد على GitHub Pages</h4>
+                    <ol class="list-decimal list-inside space-y-1 text-emerald-200">
+                        <li>قم بإنشاء مستودع جديد (Repository) على **GitHub** باسم <code class="bg-emerald-900 px-1 rounded text-gold-300">quran-warsh</code>.</li>
+                        <li>قم برفع هذا الملف وتسميته <code class="bg-emerald-900 px-1 rounded text-gold-300">index.html</code>.</li>
+                        <li>من إعدادات Repository ➔ اختر **Pages** ➔ افعل خيار Publish من الفرع الرئيسي (main branch).</li>
+                        <li>سيعطيك GitHub رابطاً مجانياً يمكنك فتحه وتثبيته مباشرة على أي هاتف!</li>
+                    </ol>
+                </div>
+
+                <!-- Method 3 -->
+                <div class="bg-emerald-950/80 p-3.5 rounded-xl border border-emerald-800">
+                    <h4 class="font-bold text-gold-300 text-sm mb-1">الطريقة 3: تحويل الملف إلى تطبيق APK مباشر</h4>
+                    <p class="mb-1 text-emerald-200">إذا أردت ملف <code class="bg-emerald-900 px-1 rounded text-gold-300">.apk</code> لتثبيته أو إرساله في WhatsApp:</p>
+                    <ol class="list-decimal list-inside space-y-1 text-emerald-200">
+                        <li>افتح موقع **PWABuilder.com** أو **WebIntoApp.com**.</li>
+                        <li>ضع رابط GitHub الخاص بتطبيقك.</li>
+                        <li>اضغط على **Generate APK** وسيتم تحميل ملف APK جاهز للتثبيت فوراً على الأندرويد!</li>
+                    </ol>
+                </div>
+            </div>
+
+            <button onclick="closeInstallGuideModal()" class="mt-5 w-full py-2.5 bg-gold-500 hover:bg-gold-400 text-emerald-950 font-bold rounded-xl transition text-xs sm:text-sm">
+                فهمت ذلك
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-emerald-950 border-t border-emerald-900/60 py-3 text-center text-[11px] text-emerald-400/60">
+        <p>تطبيق القرآن الكريم - رواية ورش عن نافع • تطبيق ويب تقدمي (PWA)</p>
+    </footer>
+
+    <!-- Service Worker Script Inline Generation -->
+    <script>
+        // Inline Service Worker Generation for Offline App Shell Caching
+        const swCode = `
+            const CACHE_NAME = 'quran-warsh-v1';
+            const ASSETS = [
+                './',
+                'https://cdn.tailwindcss.com',
+                'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
+                'https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Tajawal:wght@300;400;500;700;800&display=swap'
+            ];
+
+            self.addEventListener('install', (e) => {
+                e.waitUntil(
+                    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+                );
+                self.skipWaiting();
+            });
+
+            self.addEventListener('activate', (e) => {
+                e.waitUntil(
+                    caches.keys().then((keys) => {
+                        return Promise.all(
+                            keys.map((key) => {
+                                if (key !== CACHE_NAME) return caches.delete(key);
+                            })
+                        );
+                    })
+                );
+                self.clients.claim();
+            });
+
+            self.addEventListener('fetch', (e) => {
+                // Audio files are streamed, cache HTML shell
+                if (e.request.url.includes('.mp3')) {
+                    e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+                    return;
+                }
+                e.respondWith(
+                    caches.match(e.request).then((cached) => cached || fetch(e.request))
+                );
+            });
+        `;
+
+        if ('serviceWorker' in navigator) {
+            const blob = new Blob([swCode], { type: 'application/javascript' });
+            const swUrl = URL.createObjectURL(blob);
+            navigator.serviceWorker.register(swUrl)
+                .then(() => console.log('PWA Service Worker registered successfully.'))
+                .catch(err => console.log('SW registration error:', err));
+        }
+
+        // PWA Install Prompt Capture
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const pwaBtn = document.getElementById('pwaInstallBtn');
+            if (pwaBtn) pwaBtn.classList.remove('hidden');
+        });
+
+        function triggerPWAInstall() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        document.getElementById('pwaInstallBtn').classList.add('hidden');
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        }
+    </script>
+
+    <!-- App JavaScript Logic -->
+    <script>
+        // Verified Reciters Data for Warsh
+        const RECITERS = [
+            { id: 'kouchi', name: 'العيون الكوشي (رواية ورش)', server: 'https://server11.mp3quran.net/kouchi/' },
+            { id: 'qazabri', name: 'عمر القزابري (رواية ورش)', server: 'https://server9.mp3quran.net/qzr/' },
+            { id: 'basit_warsh', name: 'عبد الباسط عبد الصمد (رواية ورش)', server: 'https://server10.mp3quran.net/basit_warsh/' },
+            { id: 'gharbi', name: 'مصطفى غربي (رواية ورش)', server: 'https://server8.mp3quran.net/gharbi/' },
+            { id: 'hussary_warsh', name: 'محمود خليل الحصري (رواية ورش)', server: 'https://server13.mp3quran.net/hussary_warsh/' },
+            { id: 'yassin', name: 'ياسين الجزائري (رواية ورش)', server: 'https://server11.mp3quran.net/jaza/' },
+            { id: 'hssain', name: 'عبد الحميد احساين (رواية ورش)', server: 'https://server12.mp3quran.net/hssain/' }
+        ];
+
+        // 114 Surahs Dataset
+        const SURAHS = [
+            { id: 1, name: "الفاتحة", type: "مكية", verses: 7 },
+            { id: 2, name: "البقرة", type: "مدنية", verses: 286 },
+            { id: 3, name: "آل عمران", type: "مدنية", verses: 200 },
+            { id: 4, name: "النساء", type: "مدنية", verses: 176 },
+            { id: 5, name: "المائدة", type: "مدنية", verses: 120 },
+            { id: 6, name: "الأنعام", type: "مكية", verses: 165 },
+            { id: 7, name: "الأعراف", type: "مكية", verses: 206 },
+            { id: 8, name: "الأنفال", type: "مدنية", verses: 75 },
+            { id: 9, name: "التوبة", type: "مدنية", verses: 129 },
+            { id: 10, name: "يونس", type: "مكية", verses: 109 },
+            { id: 11, name: "هود", type: "مكية", verses: 123 },
+            { id: 12, name: "يوسف", type: "مكية", verses: 111 },
+            { id: 13, name: "الرعد", type: "مدنية", verses: 43 },
+            { id: 14, name: "إبراهيم", type: "مكية", verses: 52 },
+            { id: 15, name: "الحجر", type: "مكية", verses: 99 },
+            { id: 16, name: "النحل", type: "مكية", verses: 128 },
+            { id: 17, name: "الإسراء", type: "مكية", verses: 111 },
+            { id: 18, name: "الكهف", type: "مكية", verses: 110 },
+            { id: 19, name: "مريم", type: "مكية", verses: 98 },
+            { id: 20, name: "طه", type: "مكية", verses: 135 },
+            { id: 21, name: "الأنبياء", type: "مكية", verses: 112 },
+            { id: 22, name: "الحج", type: "مدنية", verses: 78 },
+            { id: 23, name: "المؤمنون", type: "مكية", verses: 118 },
+            { id: 24, name: "النور", type: "مدنية", verses: 64 },
+            { id: 25, name: "الفرقان", type: "مكية", verses: 77 },
+            { id: 26, name: "الشعراء", type: "مكية", verses: 227 },
+            { id: 27, name: "النمل", type: "مكية", verses: 93 },
+            { id: 28, name: "القصص", type: "مكية", verses: 88 },
+            { id: 29, name: "العنكبوت", type: "مكية", verses: 69 },
+            { id: 30, name: "الروم", type: "مكية", verses: 60 },
+            { id: 31, name: "لقمان", type: "مكية", verses: 34 },
+            { id: 32, name: "السجدة", type: "مكية", verses: 30 },
+            { id: 33, name: "الأحزاب", type: "مدنية", verses: 73 },
+            { id: 34, name: "سبأ", type: "مكية", verses: 54 },
+            { id: 35, name: "فاطر", type: "مكية", verses: 45 },
+            { id: 36, name: "يس", type: "مكية", verses: 83 },
+            { id: 37, name: "الصافات", type: "مكية", verses: 182 },
+            { id: 38, name: "ص", type: "مكية", verses: 88 },
+            { id: 39, name: "الزمر", type: "مكية", verses: 75 },
+            { id: 40, name: "غافر", type: "مكية", verses: 85 },
+            { id: 41, name: "فصلت", type: "مكية", verses: 54 },
+            { id: 42, name: "الشورى", type: "مكية", verses: 53 },
+            { id: 43, name: "الزخرف", type: "مكية", verses: 89 },
+            { id: 44, name: "الدخان", type: "مكية", verses: 59 },
+            { id: 45, name: "الجاثية", type: "مكية", verses: 37 },
+            { id: 46, name: "الأحقاف", type: "مكية", verses: 35 },
+            { id: 47, name: "محمد", type: "مدنية", verses: 38 },
+            { id: 48, name: "الفتح", type: "مدنية", verses: 29 },
+            { id: 49, name: "الحجرات", type: "مدنية", verses: 18 },
+            { id: 50, name: "ق", type: "مكية", verses: 45 },
+            { id: 51, name: "الذاريات", type: "مكية", verses: 60 },
+            { id: 52, name: "الطور", type: "مكية", verses: 49 },
+            { id: 53, name: "النجم", type: "مكية", verses: 62 },
+            { id: 54, name: "القمر", type: "مكية", verses: 55 },
+            { id: 55, name: "الرحمن", type: "مدنية", verses: 78 },
+            { id: 56, name: "الواقعة", type: "مكية", verses: 96 },
+            { id: 57, name: "الحديد", type: "مدنية", verses: 29 },
+            { id: 58, name: "المجادلة", type: "مدنية", verses: 22 },
+            { id: 59, name: "الحشر", type: "مدنية", verses: 24 },
+            { id: 60, name: "الممتحنة", type: "مدنية", verses: 13 },
+            { id: 61, name: "الصف", type: "مدنية", verses: 14 },
+            { id: 62, name: "الجمعة", type: "مدنية", verses: 11 },
+            { id: 63, name: "المنافقون", type: "مدنية", verses: 11 },
+            { id: 64, name: "التغابن", type: "مدنية", verses: 18 },
+            { id: 65, name: "الطلاق", type: "مدنية", verses: 12 },
+            { id: 66, name: "التحريم", type: "مدنية", verses: 12 },
+            { id: 67, name: "الملك", type: "مكية", verses: 30 },
+            { id: 68, name: "القلم", type: "مكية", verses: 52 },
+            { id: 69, name: "الحاقة", type: "مكية", verses: 52 },
+            { id: 70, name: "المعارج", type: "مكية", verses: 44 },
+            { id: 71, name: "نوح", type: "مكية", verses: 28 },
+            { id: 72, name: "الجن", type: "مكية", verses: 28 },
+            { id: 73, name: "المزمل", type: "مكية", verses: 20 },
+            { id: 74, name: "المدثر", type: "مكية", verses: 56 },
+            { id: 75, name: "القيامة", type: "مكية", verses: 40 },
+            { id: 76, name: "الإنسان", type: "مدنية", verses: 31 },
+            { id: 77, name: "المرسلات", type: "مكية", verses: 50 },
+            { id: 78, name: "النبأ", type: "مكية", verses: 40 },
+            { id: 79, name: "النازعات", type: "مكية", verses: 46 },
+            { id: 80, name: "عبس", type: "مكية", verses: 42 },
+            { id: 81, name: "التكوير", type: "مكية", verses: 29 },
+            { id: 82, name: "الانفطار", type: "مكية", verses: 19 },
+            { id: 83, name: "المطففين", type: "مكية", verses: 36 },
+            { id: 84, name: "الانشقاق", type: "مكية", verses: 25 },
+            { id: 85, name: "البروج", type: "مكية", verses: 22 },
+            { id: 86, name: "الطارق", type: "مكية", verses: 17 },
+            { id: 87, name: "الأعلى", type: "مكية", verses: 19 },
+            { id: 88, name: "الغاشية", type: "مكية", verses: 26 },
+            { id: 89, name: "الفجر", type: "مكية", verses: 30 },
+            { id: 90, name: "البلد", type: "مكية", verses: 20 },
+            { id: 91, name: "الشمس", type: "مكية", verses: 15 },
+            { id: 92, name: "الليل", type: "مكية", verses: 21 },
+            { id: 93, name: "الضحى", type: "مكية", verses: 11 },
+            { id: 94, name: "الشرح", type: "مكية", verses: 8 },
+            { id: 95, name: "التين", type: "مكية", verses: 8 },
+            { id: 96, name: "العلق", type: "مكية", verses: 19 },
+            { id: 97, name: "القدر", type: "مكية", verses: 5 },
+            { id: 98, name: "البينة", type: "مدنية", verses: 8 },
+            { id: 99, name: "الزلزلة", type: "مدنية", verses: 8 },
+            { id: 100, name: "العاديات", type: "مكية", verses: 11 },
+            { id: 101, name: "القارعة", type: "مكية", verses: 11 },
+            { id: 102, name: "التكاثر", type: "مكية", verses: 8 },
+            { id: 103, name: "العصر", type: "مكية", verses: 3 },
+            { id: 104, name: "الهمزة", type: "مكية", verses: 9 },
+            { id: 105, name: "الفيل", type: "مكية", verses: 5 },
+            { id: 106, name: "قريش", type: "مكية", verses: 4 },
+            { id: 107, name: "الماعون", type: "مكية", verses: 7 },
+            { id: 108, name: "الكوثر", type: "مكية", verses: 3 },
+            { id: 109, name: "الكافرون", type: "مكية", verses: 6 },
+            { id: 110, name: "النصر", type: "مدنية", verses: 3 },
+            { id: 111, name: "المسد", type: "مكية", verses: 5 },
+            { id: 112, name: "الإخلاص", type: "مكية", verses: 4 },
+            { id: 113, name: "الفلق", type: "مكية", verses: 5 },
+            { id: 114, name: "الناس", type: "مكية", verses: 6 }
+        ];
+
+        // State Variables
+        let currentReciterIndex = 0;
+        let currentSurahIndex = 0;
+        let isPlaying = false;
+        let isLooping = false;
+        let favorites = JSON.parse(localStorage.getItem('quran_favs_warsh')) || [];
+        let showingOnlyFavorites = false;
+
+        // Elements
+        const audio = document.getElementById('quranAudio');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const playIcon = document.getElementById('playIcon');
+        const reciterSelect = document.getElementById('reciterSelect');
+        const surahListContainer = document.getElementById('surahList');
+        const currentSurahNameEl = document.getElementById('currentSurahName');
+        const currentReciterNameEl = document.getElementById('currentReciterName');
+        const currentSurahInfoEl = document.getElementById('currentSurahInfo');
+        const progressBar = document.getElementById('progressBar');
+        const currentTimeEl = document.getElementById('currentTime');
+        const durationTimeEl = document.getElementById('durationTime');
+        const visualizerBars = document.getElementById('visualizerBars');
+        const loopBtn = document.getElementById('loopBtn');
+        const favCountBadge = document.getElementById('favCountBadge');
+
+        // Initializer
+        window.addEventListener('DOMContentLoaded', () => {
+            populateReciters();
+            renderSurahList();
+            setupAudioListeners();
+            updateFavBadgeCount();
+
+            // Load Saved Preferences
+            const savedReciter = localStorage.getItem('last_warsh_reciter');
+            const savedSurah = localStorage.getItem('last_warsh_surah');
+
+            if (savedReciter !== null) {
+                currentReciterIndex = parseInt(savedReciter);
+                reciterSelect.value = currentReciterIndex;
+            }
+            if (savedSurah !== null) {
+                currentSurahIndex = parseInt(savedSurah);
+            }
+
+            loadSurahAudio(currentSurahIndex, false);
+        });
+
+        function populateReciters() {
+            reciterSelect.innerHTML = RECITERS.map((reciter, index) => 
+                `<option value="${index}">${reciter.name}</option>`
+            ).join('');
+        }
+
+        function renderSurahList() {
+            const query = document.getElementById('searchInput').value.trim();
+            surahListContainer.innerHTML = '';
+
+            SURAHS.forEach((surah, index) => {
+                const isFav = favorites.includes(surah.id);
+                
+                if (showingOnlyFavorites && !isFav) return;
+                if (query && !surah.name.includes(query) && !surah.id.toString().includes(query)) return;
+
+                const isSelected = index === currentSurahIndex;
+
+                const card = document.createElement('div');
+                card.className = `p-2.5 rounded-xl cursor-pointer border transition flex items-center justify-between group ${
+                    isSelected 
+                    ? 'bg-emerald-800/90 border-gold-500/80 text-white shadow-md' 
+                    : 'bg-emerald-950/60 border-emerald-800/40 hover:bg-emerald-800/40 text-emerald-200'
+                }`;
+
+                card.onclick = () => selectSurah(index);
+
+                card.innerHTML = `
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-7 h-7 rounded-lg ${isSelected ? 'bg-gold-500 text-emerald-950 font-bold' : 'bg-emerald-900 text-emerald-400'} flex items-center justify-center text-[11px] font-semibold">
+                            ${surah.id}
+                        </span>
+                        <div>
+                            <h3 class="font-amiri font-bold text-sm ${isSelected ? 'text-gold-300' : 'text-emerald-100'}">${surah.name}</h3>
+                            <p class="text-[10px] text-emerald-400/80">${surah.type} • ${surah.verses} آية</p>
+                        </div>
+                    </div>
+                    <button onclick="toggleFav(event, ${surah.id})" class="p-1.5 text-emerald-400 hover:text-red-400 transition text-xs">
+                        <i class="${isFav ? 'fa-solid text-red-400' : 'fa-regular'} fa-heart"></i>
+                    </button>
+                `;
+
+                surahListContainer.appendChild(card);
+            });
+        }
+
+        function formatSurahNumber(id) {
+            return id.toString().padStart(3, '0');
+        }
+
+        function loadSurahAudio(index, autoPlay = true) {
+            currentSurahIndex = index;
+            const surah = SURAHS[index];
+            const reciter = RECITERS[currentReciterIndex];
+
+            const surahNum = formatSurahNumber(surah.id);
+            const audioUrl = `${reciter.server}${surahNum}.mp3`;
+
+            audio.src = audioUrl;
+
+            currentSurahNameEl.textContent = `سورة ${surah.name}`;
+            currentReciterNameEl.textContent = reciter.name;
+            currentSurahInfoEl.textContent = `${surah.type} • عدد آياتها ${surah.verses} • ترتيبها ${surah.id}`;
+
+            updateFavBtnStatus();
+            renderSurahList();
+
+            localStorage.setItem('last_warsh_reciter', currentReciterIndex);
+            localStorage.setItem('last_warsh_surah', currentSurahIndex);
+
+            if (autoPlay) {
+                audio.play().then(() => {
+                    isPlaying = true;
+                    updatePlayPauseUI();
+                }).catch(err => {
+                    console.log('Autoplay prevented:', err);
+                    isPlaying = false;
+                    updatePlayPauseUI();
+                });
+            } else {
+                isPlaying = false;
+                updatePlayPauseUI();
+            }
+        }
+
+        function changeReciter() {
+            currentReciterIndex = parseInt(reciterSelect.value);
+            loadSurahAudio(currentSurahIndex, isPlaying);
+        }
+
+        function selectSurah(index) {
+            loadSurahAudio(index, true);
+        }
+
+        function togglePlayPause() {
+            if (!audio.src) return;
+
+            if (isPlaying) {
+                audio.pause();
+                isPlaying = false;
+            } else {
+                audio.play();
+                isPlaying = true;
+            }
+            updatePlayPauseUI();
+        }
+
+        function updatePlayPauseUI() {
+            if (isPlaying) {
+                playIcon.className = 'fa-solid fa-pause';
+                visualizerBars.classList.remove('opacity-40');
+                visualizerBars.classList.add('opacity-100');
+            } else {
+                playIcon.className = 'fa-solid fa-play ml-0.5';
+                visualizerBars.classList.remove('opacity-100');
+                visualizerBars.classList.add('opacity-40');
+            }
+        }
+
+        function playNext() {
+            if (currentSurahIndex < SURAHS.length - 1) {
+                selectSurah(currentSurahIndex + 1);
+            } else {
+                selectSurah(0);
+            }
+        }
+
+        function playPrevious() {
+            if (currentSurahIndex > 0) {
+                selectSurah(currentSurahIndex - 1);
+            } else {
+                selectSurah(SURAHS.length - 1);
+            }
+        }
+
+        function seekAudio(value) {
+            if (audio.duration) {
+                audio.currentTime = (value / 100) * audio.duration;
+            }
+        }
+
+        function changeVolume(val) {
+            audio.volume = val;
+            const volIcon = document.getElementById('volumeIcon');
+            if (val == 0) {
+                volIcon.className = 'fa-solid fa-volume-xmark';
+            } else if (val < 0.5) {
+                volIcon.className = 'fa-solid fa-volume-low';
+            } else {
+                volIcon.className = 'fa-solid fa-volume-high';
+            }
+        }
+
+        function toggleMute() {
+            audio.muted = !audio.muted;
+            const volBar = document.getElementById('volumeBar');
+            if (audio.muted) {
+                volBar.value = 0;
+                document.getElementById('volumeIcon').className = 'fa-solid fa-volume-xmark';
+            } else {
+                volBar.value = audio.volume;
+                changeVolume(audio.volume);
+            }
+        }
+
+        function setupAudioListeners() {
+            audio.addEventListener('timeupdate', () => {
+                if (audio.duration) {
+                    const pct = (audio.currentTime / audio.duration) * 100;
+                    progressBar.value = pct;
+                    currentTimeEl.textContent = formatTime(audio.currentTime);
+                    durationTimeEl.textContent = formatTime(audio.duration);
+                }
+            });
+
+            audio.addEventListener('ended', () => {
+                if (isLooping) {
+                    audio.currentTime = 0;
+                    audio.play();
+                } else {
+                    playNext();
+                }
+            });
+        }
+
+        function formatTime(sec) {
+            if (isNaN(sec)) return "00:00";
+            const m = Math.floor(sec / 60);
+            const s = Math.floor(sec % 60);
+            return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
+        function filterSurahs() {
+            renderSurahList();
+        }
+
+        function toggleFavoritesView() {
+            showingOnlyFavorites = !showingOnlyFavorites;
+            const btn = document.getElementById('toggleFavoritesBtn');
+            if (showingOnlyFavorites) {
+                btn.classList.add('bg-gold-500', 'text-emerald-950');
+                btn.classList.remove('bg-emerald-800/60', 'text-gold-400');
+            } else {
+                btn.classList.remove('bg-gold-500', 'text-emerald-950');
+                btn.classList.add('bg-emerald-800/60', 'text-gold-400');
+            }
+            renderSurahList();
+        }
+
+        function toggleFav(e, id) {
+            e.stopPropagation();
+            if (favorites.includes(id)) {
+                favorites = favorites.filter(f => f !== id);
+            } else {
+                favorites.push(id);
+            }
+            localStorage.setItem('quran_favs_warsh', JSON.stringify(favorites));
+            updateFavBadgeCount();
+            renderSurahList();
+            updateFavBtnStatus();
+        }
+
+        function toggleCurrentFavorite() {
+            const currentSurahId = SURAHS[currentSurahIndex].id;
+            if (favorites.includes(currentSurahId)) {
+                favorites = favorites.filter(f => f !== currentSurahId);
+            } else {
+                favorites.push(currentSurahId);
+            }
+            localStorage.setItem('quran_favs_warsh', JSON.stringify(favorites));
+            updateFavBadgeCount();
+            renderSurahList();
+            updateFavBtnStatus();
+        }
+
+        function updateFavBadgeCount() {
+            if (favCountBadge) favCountBadge.textContent = favorites.length;
+        }
+
+        function updateFavBtnStatus() {
+            const currentSurahId = SURAHS[currentSurahIndex].id;
+            const isFav = favorites.includes(currentSurahId);
+            const favIcon = document.getElementById('currentFavIcon');
+            const favText = document.getElementById('favStatusText');
+            
+            if (isFav) {
+                favIcon.className = 'fa-solid fa-heart text-red-400';
+                if (favText) favText.textContent = 'مُضافة للمفضلة';
+            } else {
+                favIcon.className = 'fa-regular fa-heart';
+                if (favText) favText.textContent = 'إضافة للمفضلة';
+            }
+        }
+
+        function openAhkamModal() {
+            document.getElementById('ahkamModal').classList.remove('hidden');
+        }
+
+        function closeAhkamModal() {
+            document.getElementById('ahkamModal').classList.add('hidden');
+        }
+
+        function openInstallGuideModal() {
+            document.getElementById('installGuideModal').classList.remove('hidden');
+        }
+
+        function closeInstallGuideModal() {
+            document.getElementById('installGuideModal').classList.add('hidden');
+        }
+
+        function toggleLoop() {
+            isLooping = !isLooping;
+            if (isLooping) {
+                loopBtn.classList.add('text-gold-400', 'border-gold-500');
+            } else {
+                loopBtn.classList.remove('text-gold-400', 'border-gold-500');
+            }
+        }
+
+        function changeSpeed(val) {
+            audio.playbackRate = parseFloat(val);
+        }
+    </script>
+</body>
+</html>
